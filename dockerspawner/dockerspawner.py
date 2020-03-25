@@ -814,6 +814,7 @@ class DockerSpawner(Spawner):
         self.log.debug("Getting container '%s'", self.object_name)
         try:
             obj = yield self.docker("inspect_%s" % self.object_type, self.object_name)
+            self.log.debug(f'inspect {self.object_type} returned with: {obj}')
             self.object_id = obj[self.object_id_key]
         except APIError as e:
             if e.response.status_code == 404:

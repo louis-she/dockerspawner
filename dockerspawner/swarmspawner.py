@@ -136,7 +136,6 @@ class SwarmSpawner(DockerSpawner):
 
         if service_state["State"] in {"running", "starting", "pending", "preparing"}:
             return None
-
         else:
             return pformat(service_state)
 
