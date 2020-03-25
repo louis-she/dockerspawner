@@ -156,8 +156,9 @@ class SwarmSpawner(DockerSpawner):
                 # The tasks may not be there then the service is JUST created.
                 if retry == 3:
                     return None
-                await asyncio.sleep(2)
-                return await self.get_task(retry + 1)
+                yield from asyncio.sleep(2)
+                tasks = yield self.get_task(retry + 1)
+                return tasks
 
             elif len(tasks) > 1:
                 raise RuntimeError(
