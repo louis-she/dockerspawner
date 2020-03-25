@@ -150,6 +150,7 @@ class SwarmSpawner(DockerSpawner):
                 "tasks",
                 filters={"service": self.service_name, "desired-state": "running"},
             )
+            self.log.debug(f'Get service tasks: {tasks}')
             if len(tasks) == 0:
                 return None
 
