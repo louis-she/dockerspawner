@@ -2,6 +2,7 @@
 A Spawner for JupyterHub that runs each user's server in a separate docker service
 """
 
+import asyncio
 from pprint import pformat
 from textwrap import dedent
 import json
@@ -140,7 +141,7 @@ class SwarmSpawner(DockerSpawner):
             return pformat(service_state)
 
     @gen.coroutine
-    def get_task(self):
+    def get_task(self, retry=0):
         self.log.debug("Getting task of service '%s'", self.service_name)
         if self.get_object() is None:
             return None
@@ -152,7 +153,11 @@ class SwarmSpawner(DockerSpawner):
             )
             self.log.debug(f'Get service tasks: {tasks}')
             if len(tasks) == 0:
-                return None
+                # The tasks may not be there then the service is JUST created.
+                if retry == 3:
+                    return None
+                await asyncio.sleep(2)
+                return await self.get_task(retry + 1)
 
             elif len(tasks) > 1:
                 raise RuntimeError(
