@@ -796,7 +796,7 @@ class DockerSpawner(Spawner):
 
         container_state = container["State"]
         self.log.debug(
-            "Container %s status: %s", self.container_id[:7], pformat(container_state)
+            "Container %s status: %s", self.container_id[:7], container_state
         )
 
         if container_state["Running"]:
@@ -814,7 +814,6 @@ class DockerSpawner(Spawner):
         self.log.debug("Getting container '%s'", self.object_name)
         try:
             obj = yield self.docker("inspect_%s" % self.object_type, self.object_name)
-            self.log.debug(f'inspect {self.object_type} returned with: {obj}')
             self.object_id = obj[self.object_id_key]
         except APIError as e:
             if e.response.status_code == 404:
